@@ -3,7 +3,6 @@
 pragma solidity >=0.7.0 <0.9.0;
 
 contract Ballot {
-
     struct Voter {
         uint score;
         bool isAdmin;
@@ -34,7 +33,10 @@ contract Ballot {
         voters[targetUser].isAdmin = true;
     }
 
-    function createProposal(string memory title, string memory description) public {
+    function createProposal(
+        string memory title,
+        string memory description
+    ) public {
         require(voters[msg.sender].isAdmin, "Only admin can create proposal");
         Proposal storage proposal = proposals.push();
         proposal.title = title;
@@ -43,17 +45,26 @@ contract Ballot {
     }
 
     function voteForProposal(uint proposalIndex, uint voteValue) public {
-        require(proposalIndex >= 0 && proposalIndex < proposals.length, "Invalid proposal index");
+        require(
+            proposalIndex >= 0 && proposalIndex < proposals.length,
+            "Invalid proposal index"
+        );
         Proposal storage proposal = proposals[proposalIndex];
         require(proposal.isOpen, "Proposal is closed");
-        require(!proposal.hasVoted[msg.sender], "You have already voted for this proposal");
+        require(
+            !proposal.hasVoted[msg.sender],
+            "You have already voted for this proposal"
+        );
         proposal.votes.push(Vote(msg.sender, voteValue));
         proposal.hasVoted[msg.sender] = true;
     }
 
     function closeProposal(uint proposalIndex, uint correctValue) public {
         require(voters[msg.sender].isAdmin, "Only admin can close proposal");
-        require(proposalIndex >= 0 && proposalIndex < proposals.length, "Invalid proposal index");
+        require(
+            proposalIndex >= 0 && proposalIndex < proposals.length,
+            "Invalid proposal index"
+        );
         Proposal storage proposal = proposals[proposalIndex];
         require(proposal.isOpen, "Proposal is already closed");
         proposal.isOpen = false;
